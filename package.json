@@ -1,0 +1,17 @@
+{
+  "name": "wyld-tinkers-workshop-mechanica-ext",
+  "version": "0.1.0",
+  "description": "Standalone Pi extension for exporting minimal Wyld Tinkers Mechanica scene manifests.",
+  "type": "module",
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/mechanica-export.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*"
+  }
+}
