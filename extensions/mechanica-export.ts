@@ -7,14 +7,55 @@ const OUTPUT_FILE = "scene.manifest.json";
 
 type Vector3 = [number, number, number];
 
+type ModelAsset = {
+  id: string;
+  type: "gltf";
+  src: string;
+};
+
+type ManifestAssets = {
+  models: ModelAsset[];
+  textures: [];
+  materials: [];
+};
+
+type MechanicaObject =
+  | {
+      id: string;
+      type: "model";
+      name: string;
+      assetRef: string;
+      position: Vector3;
+      rotation: Vector3;
+      scale: Vector3;
+      selectable: boolean;
+      transformable: boolean;
+    }
+  | {
+      id: string;
+      type: "box";
+      name: string;
+      size: Vector3;
+      position: Vector3;
+      rotation: Vector3;
+      material: {
+        color: string;
+        roughness: number;
+        metalness: number;
+      };
+      selectable: boolean;
+      transformable: boolean;
+    };
+
 type MechanicaSceneManifest = {
-  manifestVersion: 1;
+  manifestVersion: 2;
   format: "wyld-tinkers-mechanica.scene";
   name: string;
   description: string;
   requirements: string;
   units: "meters";
   generatedBy: "wyld-tinkers-workshop-mechanica-ext";
+  assets: ManifestAssets;
   scene: {
     background: string;
     grid: {
@@ -41,35 +82,52 @@ type MechanicaSceneManifest = {
           position: Vector3;
         }
     >;
-    objects: Array<{
-      id: string;
-      type: "box";
-      name: string;
-      size: Vector3;
-      position: Vector3;
-      rotation: Vector3;
-      material: {
-        color: string;
-        roughness: number;
-        metalness: number;
-      };
-      selectable: boolean;
-      transformable: boolean;
-    }>;
+    objects: MechanicaObject[];
   };
 };
 
+class AssetRegistry {
+  private readonly models = new Map<string, ModelAsset>();
+
+  registerModel(asset: ModelAsset): string {
+    return this.registerAsset(this.models, asset);
+  }
+
+  private registerAsset<TAsset extends { id: string }>(assets: Map<string, TAsset>, asset: TAsset): string {
+    if (!assets.has(asset.id)) {
+      assets.set(asset.id, asset);
+    }
+
+    return asset.id;
+  }
+
+  toManifestAssets(): ManifestAssets {
+    return {
+      models: Array.from(this.models.values()),
+      textures: [],
+      materials: []
+    };
+  }
+}
+
 function buildManifest(requirements: string): MechanicaSceneManifest {
   const trimmedRequirements = requirements.trim();
+  const assetRegistry = new AssetRegistry();
+  const primaryModelAssetRef = assetRegistry.registerModel({
+    id: "primary-model",
+    type: "gltf",
+    src: "assets/models/primary.glb"
+  });
 
   return {
-    manifestVersion: 1,
+    manifestVersion: 2,
     format: "wyld-tinkers-mechanica.scene",
     name: "Mechanica Export",
     description: trimmedRequirements || "Minimal Mechanica scene exported from Pi.",
     requirements: trimmedRequirements,
     units: "meters",
     generatedBy: "wyld-tinkers-workshop-mechanica-ext",
+    assets: assetRegistry.toManifestAssets(),
     scene: {
       background: "#20242b",
       grid: {
@@ -97,6 +155,17 @@ function buildManifest(requirements: string): MechanicaSceneManifest {
         }
       ],
       objects: [
+        {
+          id: "primary-model-object",
+          type: "model",
+          name: "Primary Model",
+          assetRef: primaryModelAssetRef,
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          selectable: true,
+          transformable: true
+        },
         {
           id: "primary-cube",
           type: "box",

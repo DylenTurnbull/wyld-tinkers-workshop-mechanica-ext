@@ -62,18 +62,43 @@ The path is relative to Pi's current working directory for the active session. R
 
 The exported JSON includes:
 
-- `manifestVersion: 1`
+```json
+{
+  "manifestVersion": 2,
+  "assets": {
+    "models": [
+      { "id": "primary-model", "type": "gltf", "src": "assets/models/primary.glb" }
+    ],
+    "textures": [],
+    "materials": []
+  },
+  "scene": {
+    "objects": [
+      { "id": "primary-model-object", "type": "model", "assetRef": "primary-model" },
+      { "id": "primary-cube", "type": "box", "name": "Primary Cube" }
+    ]
+  }
+}
+```
+
+Summary:
+
+- `manifestVersion: 2`
 - `format: "wyld-tinkers-mechanica.scene"`
 - `name`, `description`, and `requirements`
 - `units: "meters"`
 - `generatedBy: "wyld-tinkers-workshop-mechanica-ext"`
+- top-level `assets` with exactly `models`, `textures`, and `materials`
+  - one deterministic glTF model asset: `{ "id": "primary-model", "type": "gltf", "src": "assets/models/primary.glb" }`
+  - empty `textures` and `materials` arrays
 - `scene` data containing:
   - background color
   - visible grid settings
   - perspective camera position, target, and FOV
   - ambient and directional lights
-  - one selectable, transformable blue box object named `Primary Cube`
+  - one selectable, transformable model object referencing the registered model asset
+  - one selectable, transformable blue box object named `Primary Cube` as a primitive fallback/test object
 
 ## MVP scope constraints
 
-This is an MVP exporter. It intentionally does not synthesize full scenes from natural language, generate meshes, load assets, validate against a formal schema, or preserve prior exports. The output is a fixed minimal scene scaffold with the user's requirements captured for downstream tooling.
+This is an MVP exporter. It intentionally does not synthesize full scenes from natural language, generate meshes, validate against a formal schema, or preserve prior exports. The output is a fixed minimal Manifest v2 scene scaffold with a deterministic model asset reference and the user's requirements captured for downstream tooling.
