@@ -1,0 +1,60 @@
+{
+  "manifestVersion": 2,
+  "format": "wyld-tinkers-mechanica.scene",
+  "name": "Mechanica Forge Workflow Example",
+  "description": "Example Mechanica scene manifest using Forge project-root asset paths.",
+  "requirements": "Import assets/models/example.glb as a selectable model.",
+  "units": "meters",
+  "generatedBy": "wyld-tinkers-workshop-mechanica-ext",
+  "assets": {
+    "models": [
+      {
+        "id": "model-example",
+        "type": "gltf",
+        "src": "assets/models/example.glb"
+      }
+    ],
+    "textures": [],
+    "materials": []
+  },
+  "scene": {
+    "background": "#20242b",
+    "grid": {
+      "visible": true,
+      "size": 20,
+      "divisions": 20
+    },
+    "camera": {
+      "type": "perspective",
+      "position": [4, 3, 5],
+      "target": [0, 0.6, 0],
+      "fov": 60
+    },
+    "lights": [
+      {
+        "type": "ambient",
+        "color": "#ffffff",
+        "intensity": 0.6
+      },
+      {
+        "type": "directional",
+        "color": "#ffffff",
+        "intensity": 1,
+        "position": [8, 10, 6]
+      }
+    ],
+    "objects": [
+      {
+        "id": "object-model-example",
+        "type": "model",
+        "name": "Example Model",
+        "assetRef": "model-example",
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1],
+        "selectable": true,
+        "transformable": true
+      }
+    ]
+  }
+}
